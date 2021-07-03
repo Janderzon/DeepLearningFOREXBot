@@ -1,8 +1,10 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 
 #Import data from csv.
 df = pd.read_csv("EURUSDDATA.csv")
+
+#Remove data rows with missing SMA values
+df.dropna(subset=["SMA20","SMA50"])
 
 #Function to split data into training, validation and test sets.
 def split_train_val_test(data, train_prop=0.7, val_prop=0.2):
