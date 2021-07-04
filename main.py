@@ -51,3 +51,12 @@ def split_train_val_test(data, train_prop=0.7, val_prop=0.2):
     val_df = data[int(n*train_prop):int(n*(train_prop+val_prop))]
     test_df = data[int(n*(train_prop+val_prop)):]
     return train_df, val_df, test_df
+
+#Extract labels from data.
+train_df, val_df, test_df = split_train_val_test(df)
+train_data = train_df.drop(columns=["Ask"])
+val_data = val_df.drop(columns=["Ask"])
+test_data = test_df.drop(columns=["Ask"])
+train_labels = train_df["Ask"]
+val_labels = val_df["Ask"]
+test_labels = test_df["Ask"]
