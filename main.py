@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 df = pd.read_csv("EURUSDDATA.csv")
 
 #Remove data rows with missing SMA values.
-df = df.dropna(subset=["SMA20","SMA50"])
+df = df.dropna(subset=["SMA20","SMA50","SMA200"])
 
 #Encode day of week catagory.
 days = df[["DayOfWeek"]]
@@ -30,8 +30,19 @@ df["SecondCos"] = np.cos((2*np.pi/59)*df[["Second"]])
 df["MillisecondSin"] = np.sin((2*np.pi/999)*df[["Millisecond"]])
 df["MillisecondCos"] = np.cos((2*np.pi/999)*df[["Millisecond"]])
 
-#Remove original time columns
+#Remove original time columns.
 df = df.drop(columns=["DayOfYear", "DayOfWeek", "Hour", "Minute", "Second", "Millisecond"])
+
+#Normalise ask, sma20 and sma50 using sma200.
+df["Ask"] = df["Ask"]-df["SMA200"]
+df["SMA20"] = df["SMA20"]-df["SMA200"]
+df["SMA50"] = df["SMA50"]-df["SMA200"]
+df["Ask"] = df["Ask"]/max(abs(df["Ask"]))
+df["SMA20"] = df["SMA20"]/max(abs(df["SMA20"]))
+df["SMA50"] = df["SMA50"]/max(abs(df["SMA50"]))
+
+#Remove SMA200.
+df = df.drop(columns=["SMA200"])
 
 #Function to split data into training, validation and test sets.
 def split_train_val_test(data, train_prop=0.7, val_prop=0.2):
