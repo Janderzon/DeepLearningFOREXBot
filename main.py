@@ -1,6 +1,7 @@
 import pandas as pd
 import time
 import numpy as np
+import tensorflow as tf
 import matplotlib.pyplot as plt
 
 #Import data from csv.
@@ -60,3 +61,12 @@ test_data = test_df.drop(columns=["Ask"])
 train_labels = train_df["Ask"]
 val_labels = val_df["Ask"]
 test_labels = test_df["Ask"]
+
+#Reshape data.
+train_data = np.expand_dims(train_data, axis=0)
+val_data = np.expand_dims(val_data, axis=0)
+test_data = np.expand_dims(test_data, axis=0)
+train_labels = np.expand_dims(train_labels, axis=0)
+val_labels = np.expand_dims(val_labels, axis=0)
+test_labels = np.expand_dims(test_labels, axis=0)
+
