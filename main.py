@@ -9,6 +9,7 @@ df = pd.read_csv("EURUSDDATA.csv")
 
 #Remove data rows with missing SMA values.
 df = df.dropna(subset=["SMA20","SMA50","SMA200"])
+df = df.reset_index(drop=True)
 
 #Encode day of week catagory.
 days = df[["DayOfWeek"]]
@@ -54,7 +55,7 @@ def split_train_val_test(data, train_prop=0.7, val_prop=0.2):
     return train_df, val_df, test_df
 
 #Extract labels from data.
-train_df, val_df, test_df = split_train_val_test(df)
+train_df, val_df, test_df = split_train_val_test(df, 0.9, 0.0999)
 train_data = train_df.drop(columns=["Ask"])
 val_data = val_df.drop(columns=["Ask"])
 test_data = test_df.drop(columns=["Ask"])
@@ -69,4 +70,3 @@ test_data = np.expand_dims(test_data, axis=0)
 train_labels = np.expand_dims(train_labels, axis=0)
 val_labels = np.expand_dims(val_labels, axis=0)
 test_labels = np.expand_dims(test_labels, axis=0)
-
