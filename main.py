@@ -55,7 +55,7 @@ def split_train_val_test(data, train_prop=0.7, val_prop=0.2):
     return train_df, val_df, test_df
 
 #Extract labels from data.
-train_df, val_df, test_df = split_train_val_test(df, 0.9, 0.0999)
+train_df, val_df, test_df = split_train_val_test(df, 0.05, 0.05)
 train_data = train_df.drop(columns=["Ask"])
 val_data = val_df.drop(columns=["Ask"])
 test_data = test_df.drop(columns=["Ask"])
@@ -70,3 +70,27 @@ test_data = np.expand_dims(test_data, axis=0)
 train_labels = np.expand_dims(train_labels, axis=0)
 val_labels = np.expand_dims(val_labels, axis=0)
 test_labels = np.expand_dims(test_labels, axis=0)
+
+#Define deep LSTM model.
+single_node_RNN = tf.keras.models.Sequential([
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14, return_sequences=True),
+    tf.keras.layers.LSTM(14),
+    tf.keras.layers.Dense(1)
+])
+
+#Compile and fit deep LSTM model.
+single_node_RNN.compile(optimizer=tf.optimizers.Adam(), loss=tf.losses.MeanSquaredError())
+single_node_RNN.fit(train_data, train_labels, epochs=20)
+
+#Evaluate deep LSTM model.
+prediction = single_node_RNN.evaluate(val_data, val_labels)
+print(val_labels)
+print(prediction)
