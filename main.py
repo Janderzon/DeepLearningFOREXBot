@@ -3,6 +3,7 @@ import time
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import WindowGenerator as wg
 
 #Import data from csv.
 df = pd.read_csv("EURUSDDATA.csv")
@@ -63,16 +64,21 @@ train_labels = train_df["Close"][1:]
 val_labels = val_df["Close"][1:]
 test_labels = test_df["Close"][1:]
 
-#Reshape data.
-train_data = np.expand_dims(train_data, axis=0)
-val_data = np.expand_dims(val_data, axis=0)
-test_data = np.expand_dims(test_data, axis=0)
-train_labels = np.expand_dims(train_labels, axis=0)
-val_labels = np.expand_dims(val_labels, axis=0)
-test_labels = np.expand_dims(test_labels, axis=0)
+#Create window.
+window = wg.WindowGenerator(input_width=24, label_width=24, shift=1, label_columns=["Close"], 
+                            train_df=train_df, val_df=val_df, test_df=test_df)
+
+#Function to compile and fit models.
+def compile_and_fit(model, window, epochs=5):
+  model.compile(loss=tf.losses.MeanSquaredError(),
+                optimizer=tf.optimizers.Adam())
+
+  history = model.fit(window.train, epochs=epochs,
+                      validation_data=window.val)
+  return history
 
 #Define deep LSTM model.
-single_node_RNN = tf.keras.models.Sequential([
+deep_LSTM = tf.keras.models.Sequential([
     tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=True),
@@ -82,13 +88,10 @@ single_node_RNN = tf.keras.models.Sequential([
     tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12),
+    tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.Dense(1),
 ])
 
 #Compile and fit deep LSTM model.
-single_node_RNN.compile(optimizer=tf.optimizers.Adam(), loss=tf.losses.MeanSquaredError())
-single_node_RNN.fit(train_data, train_labels, epochs=5)
-
-#Evaluate deep LSTM model.
-prediction = single_node_RNN.evaluate(val_data, val_labels)
+history = compile_and_fit(deep_LSTM, window)
+window.plot("Close", deep_LSTM)
