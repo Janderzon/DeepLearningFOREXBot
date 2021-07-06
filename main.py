@@ -55,21 +55,13 @@ def split_train_val_test(data, train_prop=0.7, val_prop=0.2):
     test_df = data[int(n*(train_prop+val_prop)):]
     return train_df, val_df, test_df
 
-#Extract labels from data.
-train_df, val_df, test_df = split_train_val_test(df)
-train_data = train_df[:-1]
-val_data = val_df[:-1]
-test_data = test_df[:-1]
-train_labels = train_df["Close"][1:]
-val_labels = val_df["Close"][1:]
-test_labels = test_df["Close"][1:]
-
 #Create window.
+train_df, val_df, test_df = split_train_val_test(df)
 window = wg.WindowGenerator(input_width=24*5, label_width=24, shift=24, label_columns=["Close"], 
                             train_df=train_df, val_df=val_df, test_df=test_df)
 
 #Function to compile and fit models.
-def compile_and_fit(model, window, epochs=500):
+def compile_and_fit(model, window, epochs=5):
     model.compile(loss=tf.losses.MeanSquaredError(),
                     optimizer=tf.optimizers.Adam(),
                     metrics=[tf.metrics.MeanAbsoluteError()])
