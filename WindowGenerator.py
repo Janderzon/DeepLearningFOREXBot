@@ -87,7 +87,6 @@ class WindowGenerator():
                 plt.legend()
 
         plt.xlabel('Time [h]')
-        plt.show()
 
     def make_dataset(self, data):
         data = np.array(data, dtype=np.float32)

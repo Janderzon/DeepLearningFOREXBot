@@ -65,17 +65,18 @@ val_labels = val_df["Close"][1:]
 test_labels = test_df["Close"][1:]
 
 #Create window.
-window = wg.WindowGenerator(input_width=24, label_width=24, shift=1, label_columns=["Close"], 
+window = wg.WindowGenerator(input_width=24*5, label_width=24, shift=24, label_columns=["Close"], 
                             train_df=train_df, val_df=val_df, test_df=test_df)
 
 #Function to compile and fit models.
-def compile_and_fit(model, window, epochs=5):
-  model.compile(loss=tf.losses.MeanSquaredError(),
-                optimizer=tf.optimizers.Adam())
+def compile_and_fit(model, window, epochs=500):
+    model.compile(loss=tf.losses.MeanSquaredError(),
+                    optimizer=tf.optimizers.Adam(),
+                    metrics=[tf.metrics.MeanAbsoluteError()])
 
-  history = model.fit(window.train, epochs=epochs,
-                      validation_data=window.val)
-  return history
+    history = model.fit(window.train, epochs=epochs,
+                        validation_data=window.val)
+    return history
 
 #Define deep LSTM model.
 deep_LSTM = tf.keras.models.Sequential([
@@ -88,10 +89,14 @@ deep_LSTM = tf.keras.models.Sequential([
     tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.Dense(1),
+    tf.keras.layers.LSTM(12, return_sequences=False),
+    tf.keras.layers.Dense(24, kernel_initializer=tf.initializers.zeros()),
+    tf.keras.layers.Reshape([24, 1])
 ])
 
 #Compile and fit deep LSTM model.
 history = compile_and_fit(deep_LSTM, window)
+pd.DataFrame(history.history).plot(figsize=(8,5))
+plt.grid(True)
 window.plot("Close", deep_LSTM)
+plt.show()
