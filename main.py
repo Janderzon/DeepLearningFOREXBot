@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import WindowGenerator as wg
 
 #Input variables.
-EPOCHS = 5
+EPOCHS = 100
 BATCH_SIZE = 1000
 
 #Import data from csv.
@@ -76,14 +76,6 @@ def compile_and_fit(model, window, epochs=5):
 
 #Define deep LSTM model.
 deep_LSTM = tf.keras.models.Sequential([
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=True),
     tf.keras.layers.LSTM(12, return_sequences=False),
     tf.keras.layers.Dense(24, kernel_initializer=tf.initializers.zeros()),
