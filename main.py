@@ -5,6 +5,10 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import WindowGenerator as wg
 
+#Input variables.
+EPOCHS = 5
+BATCH_SIZE = 1000
+
 #Import data from csv.
 df = pd.read_csv("EURUSDDATA.csv")
 
@@ -58,7 +62,7 @@ def split_train_val_test(data, train_prop=0.7, val_prop=0.2):
 #Create window.
 train_df, val_df, test_df = split_train_val_test(df)
 window = wg.WindowGenerator(input_width=24*5, label_width=24, shift=24, label_columns=["Close"], 
-                            train_df=train_df, val_df=val_df, test_df=test_df)
+                            train_df=train_df, val_df=val_df, test_df=test_df, batch_size=BATCH_SIZE)
 
 #Function to compile and fit models.
 def compile_and_fit(model, window, epochs=5):
@@ -87,7 +91,7 @@ deep_LSTM = tf.keras.models.Sequential([
 ])
 
 #Compile and fit deep LSTM model.
-history = compile_and_fit(deep_LSTM, window)
+history = compile_and_fit(deep_LSTM, window, EPOCHS)
 pd.DataFrame(history.history).plot(figsize=(8,5))
 plt.grid(True)
 window.plot("Close", deep_LSTM)

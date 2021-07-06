@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 
 class WindowGenerator():
     def __init__(self, input_width, label_width, shift,
-                train_df, val_df, test_df, label_columns=None):
+                train_df, val_df, test_df, label_columns=None,
+                batch_size=32):
         # Store the raw data.
         self.train_df = train_df
         self.val_df = val_df
         self.test_df = test_df
+        self.batch_size = batch_size
 
         # Work out the label column indices.
         self.label_columns = label_columns
@@ -96,7 +98,7 @@ class WindowGenerator():
             sequence_length=self.total_window_size,
             sequence_stride=1,
             shuffle=True,
-            batch_size=32,)
+            batch_size=self.batch_size,)
 
         ds = ds.map(self.split_window)
 
