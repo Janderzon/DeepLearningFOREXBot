@@ -1,9 +1,9 @@
 import pandas as pd
 import time
 import numpy as np
-import tensorflow as tf
 import matplotlib.pyplot as plt
 import WindowGenerator as wg
+import Models
 
 #Input variables.
 EPOCHS = 5
@@ -64,40 +64,18 @@ train_df, val_df, test_df = split_train_val_test(df)
 window = wg.WindowGenerator(input_width=24*5, label_width=24, shift=24, label_columns=["Close"], 
                             train_df=train_df, val_df=val_df, test_df=test_df, batch_size=BATCH_SIZE)
 
-#Function to compile and fit models.
-def compile_and_fit(model, window, epochs=5):
-    model.compile(loss=tf.losses.MeanSquaredError(),
-                    optimizer=tf.optimizers.Adam(),
-                    metrics=[tf.metrics.MeanAbsoluteError()])
-
-    history = model.fit(window.train, epochs=epochs,
-                        validation_data=window.val)
-    return history
-
-#Define deep LSTM model.
-deep_LSTM = tf.keras.models.Sequential([
-    tf.keras.layers.LSTM(12, return_sequences=True),
-    tf.keras.layers.LSTM(12, return_sequences=False),
-    tf.keras.layers.Dense(24, kernel_initializer=tf.initializers.zeros()),
-    tf.keras.layers.Reshape([24, 1])
-])
+#Create shallow LSTM model.
+shallow_LSTM, model_name = Models.Shallow_LSTM()
 
 #Compile and fit deep LSTM model.
-history = compile_and_fit(deep_LSTM, window, EPOCHS)
-pd.DataFrame(history.history).plot(figsize=(8,5))
-plt.grid(True)
-window.plot("Close", deep_LSTM)
-plt.show()
+history = Models.Compile_And_Fit(shallow_LSTM, window, EPOCHS)
 
 #Save the trained model.
-model_name = "shallow_LSTM"
-model_folder = "Models\\" + model_name
-tf.keras.models.save_model(
-    deep_LSTM,
-    model_folder,
-    overwrite=True,
-    include_optimizer=True,
-    save_format=None,
-    signatures=None,
-    options=None
-)
+path = "Saved Models\\" + model_name
+Models.Save_Model(shallow_LSTM, path)
+
+#Plot results.
+pd.DataFrame(history.history).plot(figsize=(8,5))
+plt.grid(True)
+window.plot("Close", shallow_LSTM)
+plt.show()

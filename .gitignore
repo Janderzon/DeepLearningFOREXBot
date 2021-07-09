@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Models folder
-Models/
+Saved Models/
