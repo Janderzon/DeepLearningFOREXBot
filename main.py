@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import WindowGenerator as wg
 
 #Input variables.
-EPOCHS = 100
+EPOCHS = 5
 BATCH_SIZE = 1000
 
 #Import data from csv.
@@ -88,3 +88,16 @@ pd.DataFrame(history.history).plot(figsize=(8,5))
 plt.grid(True)
 window.plot("Close", deep_LSTM)
 plt.show()
+
+#Save the trained model.
+model_name = "shallow_LSTM"
+model_folder = "Models\\" + model_name
+tf.keras.models.save_model(
+    deep_LSTM,
+    model_folder,
+    overwrite=True,
+    include_optimizer=True,
+    save_format=None,
+    signatures=None,
+    options=None
+)
