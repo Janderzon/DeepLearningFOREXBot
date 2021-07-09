@@ -11,6 +11,15 @@ def Shallow_LSTM():
 
     return shallow_LSTM, "Shallow LSTM"
 
+def Compile_And_Fit(model, window, epochs=5):
+    model.compile(loss=tf.losses.MeanSquaredError(),
+                    optimizer=tf.optimizers.Adam(),
+                    metrics=[tf.metrics.MeanAbsoluteError()])
+
+    history = model.fit(window.train, epochs=epochs,
+                        validation_data=window.val)
+    return history
+
 def Save_Model(model, path):
     tf.keras.models.save_model(
         model,
