@@ -28,5 +28,6 @@ def Save_Model(model, path):
         include_optimizer=True,
         save_format=None,
         signatures=None,
-        options=None
+        options=None,
+        save_traces=False
     )
