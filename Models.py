@@ -9,6 +9,8 @@ def Shallow_LSTM():
         tf.keras.layers.Reshape([24, 1])
     ])
 
+    shallow_LSTM.compute_output_signature
+
     return shallow_LSTM, "Shallow LSTM"
 
 def Compile_And_Fit(model, window, epochs=5):
@@ -25,9 +27,5 @@ def Save_Model(model, path):
         model,
         path,
         overwrite=True,
-        include_optimizer=True,
-        save_format=None,
-        signatures=None,
-        options=None,
-        save_traces=False
+        save_format="tf",
     )

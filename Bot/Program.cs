@@ -14,6 +14,7 @@ namespace Bot
         {
             MLContext mlContext = new MLContext();
             TensorFlowModel tensorFlowModel = mlContext.Model.LoadTensorFlowModel(_modelPath);
+            var pipeline = tensorFlowModel.ScoreTensorFlowModel("StatefulPartitionedCall:0", "serving_default_lstm_input:0", false);
         }
     }
 }
