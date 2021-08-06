@@ -18,18 +18,20 @@ df = df.reset_index(drop=True)
 
 #Encode day of week catagory.
 days = df[["DayOfWeek"]]
+print(len(days))
 def encode_day(day):
     return time.strptime(day, "%A").tm_wday
 days_encoded = pd.Series(map(encode_day, days["DayOfWeek"]))
-df[["DayOfWeek"]] = days_encoded
+print(len(days_encoded))
+df["DayOfWeek"] = days_encoded
 
 #Convert time inputs to oscillating signals.
 df["YearSin"] = np.sin(2*np.pi*df["DayOfYear"]/364)
 df["YearCos"] = np.cos(2*np.pi*df["DayOfYear"]/364)
-df["DaySin"] = np.sin((2*np.pi/6)*df[["DayOfWeek"]])
-df["DayCos"] = np.cos((2*np.pi/6)*df[["DayOfWeek"]])
-df["HourSin"] = np.sin((2*np.pi/23)*df[["Hour"]])
-df["HourCos"] = np.cos((2*np.pi/23)*df[["Hour"]])
+df["DaySin"] = np.sin((2*np.pi/6)*df["DayOfWeek"])
+df["DayCos"] = np.cos((2*np.pi/6)*df["DayOfWeek"])
+df["HourSin"] = np.sin((2*np.pi/23)*df["Hour"])
+df["HourCos"] = np.cos((2*np.pi/23)*df["Hour"])
 
 #Remove original time columns.
 df = df.drop(columns=["DayOfYear", "DayOfWeek", "Hour"])
